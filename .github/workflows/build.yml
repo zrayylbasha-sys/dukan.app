@@ -2,7 +2,7 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -10,26 +10,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
 
     - name: Install dependencies
       run: |
-        pip install --upgrade pip
-        pip install buildozer cython==0.29.33
+        sudo apt-get update
+        sudo apt-get install -y build-essential libffi-dev libssl-dev ccache git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake gettext libffi-dev libssl-dev
 
     - name: Build with Buildozer
-      uses: ArtemSydoryk/buildozer-action@v1
+      uses: ArtemSydoryk/buildozer-action@v1.2.0
       with:
-        command: buildozer -v android debug
-        subfolder: .
+        command: buildozer android debug
 
     - name: Upload APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dukan_app_apk
         path: bin/*.apk
