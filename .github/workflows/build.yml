@@ -18,18 +18,22 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Install dependencies
+    - name: Install System Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential libffi-dev libssl-dev ccache git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake gettext
+        sudo apt-get install -y build-essential libffi-dev libssl-dev ccache git zip unzip openjdk-17-jdk python3-pip python3-venv autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake gettext
 
-    - name: Install Buildozer and Cython
+    - name: Install Buildozer in Virtual Env
       run: |
-        pip install --upgrade pip
-        pip install cython==0.29.36 buildozer
+        python -m venv venv
+        source venv/bin/activate
+        pip install --upgrade pip setuptools
+        pip install "cython<3.0.0" buildozer
 
-    - name: Build with Buildozer
-      run: buildozer android debug
+    - name: Build APK
+      run: |
+        source venv/bin/activate
+        buildozer android debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
